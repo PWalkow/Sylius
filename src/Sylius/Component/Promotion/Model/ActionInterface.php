@@ -16,23 +16,23 @@ namespace Sylius\Component\Promotion\Model;
  */
 interface ActionInterface
 {
-    const TYPE_FIXED_DISCOUNT      = 'fixed_discount';
-    const TYPE_PERCENTAGE_DISCOUNT = 'percentage_discount';
+//    const TYPE_FIXED_DISCOUNT      = 'fixed_discount';
+//    const TYPE_PERCENTAGE_DISCOUNT = 'percentage_discount';
 
     /**
      * @return mixed
      */
     public function getId();
 
-    /**
-     * @return string
-     */
-    public function getType();
-
-    /**
-     * @param string $type
-     */
-    public function setType($type);
+//    /**
+//     * @return string
+//     */
+//    public function getType();
+//
+//    /**
+//     * @param string $type
+//     */
+//    public function setType($type);
 
     /**
      * @return array
@@ -50,7 +50,52 @@ interface ActionInterface
     public function getPromotion();
 
     /**
+     * @return ArrayCollection[FilterInterface]
+     */
+    public function getFilters();
+
+    /**
+     * @return ArrayCollection[BenefitInterface]
+     */
+    public function getBenefits();
+
+    /**
      * @param PromotionInterface $promotion
      */
     public function setPromotion(PromotionInterface $promotion = null);
+
+    /**
+     * @param BenefitInterface $benefit
+     *
+     * @return boolean
+     */
+    public function hasBenefit(BenefitInterface $benefit);
+
+    /**
+     * @param BenefitInterface $benefit
+     */
+    public function addBenefit(BenefitInterface $benefit);
+
+    /**
+     * @param BenefitInterface $benefit
+     */
+    public function removeBenefit(BenefitInterface $benefit);
+
+    /**
+     * @param FilterInterface $filter
+     *
+     * @return boolean
+     */
+    public function hasFilter(FilterInterface $filter);
+
+    /**
+     * @param FilterInterface $filter
+     */
+    public function addFilter(FilterInterface $filter);
+
+    /**
+     * @param FilterInterface $filter
+     */
+    public function removeFilter(FilterInterface $filter);
+
 }
