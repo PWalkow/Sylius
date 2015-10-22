@@ -30,6 +30,16 @@ interface AdjustmentInterface extends TimestampableInterface, OriginAwareInterfa
     public function setAdjustable(AdjustableInterface $adjustable = null);
 
     /**
+     * @return int|null
+     */
+    public function getInventoryUnit();
+
+    /**
+     * @param $inventoryUnit int
+     */
+    public function setInventoryUnit($inventoryUnit);
+
+    /**
      * @return string
      */
     public function getType();

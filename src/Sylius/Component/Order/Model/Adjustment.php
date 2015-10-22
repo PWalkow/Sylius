@@ -32,6 +32,11 @@ class Adjustment implements AdjustmentInterface
     protected $orderItem;
 
     /**
+     * @var int|null
+     */
+    protected $inventoryUnit;
+
+    /**
      * @var string
      */
     protected $type;
@@ -122,6 +127,22 @@ class Adjustment implements AdjustmentInterface
         if ($adjustable instanceof OrderItemInterface) {
             $this->orderItem = $adjustable;
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getInventoryUnit()
+    {
+        return $this->inventoryUnit;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setInventoryUnit($inventoryUnit)
+    {
+        $this->inventoryUnit = $inventoryUnit;
     }
 
     /**

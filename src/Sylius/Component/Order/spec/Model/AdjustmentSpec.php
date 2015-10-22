@@ -148,4 +148,15 @@ class AdjustmentSpec extends ObjectBehavior
     {
         $this->getUpdatedAt()->shouldReturn(null);
     }
+
+    function it_has_no_inventory_unit_by_default()
+    {
+        $this->getInventoryUnit()->shouldReturn(null);
+    }
+
+    function its_inventory_unit_is_mutable()
+    {
+        $this->setInventoryUnit(123)->shouldReturn(null);
+        $this->getInventoryUnit()->shouldReturn(123);
+    }
 }
