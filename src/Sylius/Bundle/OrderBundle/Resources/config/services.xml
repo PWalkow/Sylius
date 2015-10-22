@@ -39,5 +39,14 @@
         <service id="sylius.listener.order_update" class="%sylius.listener.order_update.class%">
             <tag name="kernel.event_listener" event="sylius.order.pre_update" method="recalculateOrderTotal" />
         </service>
+
+        <service id="sylius.listener.adjustment" class="Sylius\Bundle\OrderBundle\EventListener\AdjustmentSubscriber">
+            <tag name="kernel.event_subscriber" />
+            <argument type="service" id="sylius.repository.adjustment" />
+            <argument type="service" id="sylius.repository.order" />
+            <argument type="service" id="sylius.repository.order_item" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+        </service>
     </services>
+
 </container>

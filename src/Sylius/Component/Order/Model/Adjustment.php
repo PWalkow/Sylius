@@ -132,6 +132,38 @@ class Adjustment implements AdjustmentInterface
     /**
      * {@inheritdoc}
      */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOrder(OrderInterface $order)
+    {
+        $this->order = $order;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrderItem()
+    {
+        return $this->orderItem;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOrderItem(OrderItemInterface $orderItem)
+    {
+        $this->orderItem = $orderItem;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getInventoryUnit()
     {
         return $this->inventoryUnit;

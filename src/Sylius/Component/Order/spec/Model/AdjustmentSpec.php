@@ -159,4 +159,28 @@ class AdjustmentSpec extends ObjectBehavior
         $this->setInventoryUnit(123)->shouldReturn(null);
         $this->getInventoryUnit()->shouldReturn(123);
     }
+
+    function it_has_no_order_by_default()
+    {
+        $this->getOrder()->shouldReturn(null);
+    }
+
+    function its_order_is_mutable(
+        OrderInterface $order
+    ) {
+        $this->setOrder($order);
+        $this->getOrder()->shouldReturn($order);
+    }
+
+    function it_has_no_order_item_by_default()
+    {
+        $this->getOrderItem()->shouldReturn(null);
+    }
+
+    function its_order_item_is_mutable(
+        OrderItemInterface $orderItem
+    ) {
+        $this->setOrderItem($orderItem);
+        $this->getOrderItem()->shouldReturn($orderItem);
+    }
 }
