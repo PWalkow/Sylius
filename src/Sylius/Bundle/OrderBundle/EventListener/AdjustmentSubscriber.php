@@ -67,9 +67,7 @@ class AdjustmentSubscriber implements EventSubscriberInterface
         /** @var AdjustmentInterface $adjustment */
         $adjustment = $this->createAdjustmentWithCommonValues($adjustmentDTO);
 
-        $order = $this->orderRepository->findOneBy(['id' => $adjustmentDTO->getOrderId()]);
-
-        $adjustment->setOrder($order);
+        $adjustment->setOrder($adjustmentDTO->getOrder());
 
         $this->entityManager->persist($adjustment);
     }
@@ -84,11 +82,8 @@ class AdjustmentSubscriber implements EventSubscriberInterface
         /** @var AdjustmentInterface $adjustment */
         $adjustment = $this->createAdjustmentWithCommonValues($adjustmentDTO);
 
-        $orderItem = $this->orderItemRepository->findOneBy(['id' => $adjustmentDTO->getOrderItemId()]);
-        $order = $this->orderRepository->findOneBy(['id' => $adjustmentDTO->getOrderId()]);
-
-        $adjustment->setOrder($order);
-        $adjustment->setOrderItem($orderItem);
+        $adjustment->setOrder($adjustmentDTO->getOrder());
+        $adjustment->setOrderItem($adjustmentDTO->getOrderItem());
         $adjustment->setInventoryUnit($adjustmentDTO->getInventoryUnit());
 
         $this->entityManager->persist($adjustment);

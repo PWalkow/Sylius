@@ -196,7 +196,7 @@
             <argument type="service" id="sylius.payment.delegating_fee_calculator" />
         </service>
         <service id="sylius.order_processing.taxation_processor" class="%sylius.order_processing.taxation_processor.class%">
-            <argument type="service" id="sylius.repository.adjustment" />
+            <argument type="service" id="event_dispatcher" />
             <argument type="service" id="sylius.tax_calculator" />
             <argument type="service" id="sylius.tax_rate_resolver" />
             <argument type="service" id="sylius.zone_matcher" />

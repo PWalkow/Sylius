@@ -13,13 +13,20 @@ namespace Sylius\Component\Order\DTO;
 
 
 
+use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Order\Model\OrderItemInterface;
+
 class AdjustmentDTO
 {
-    /** @var int */
-    private $orderId;
+    /**
+     * @var OrderInterface
+     */
+    private $order;
 
-    /** @var int */
-    private $orderItemId;
+    /**
+     * @var OrderItemInterface
+     */
+    private $orderItem;
 
     /** @var  int */
     private $inventoryUnit;
@@ -43,35 +50,35 @@ class AdjustmentDTO
     private $originType;
 
     /**
-     * @return int
+     * @return mixed
      */
-    public function getOrderId()
+    public function getOrder()
     {
-        return $this->orderId;
+        return $this->order;
     }
 
     /**
-     * @param int $orderId
+     * @param mixed $order
      */
-    public function setOrderId($orderId)
+    public function setOrder($order)
     {
-        $this->orderId = $orderId;
+        $this->order = $order;
     }
 
     /**
-     * @return int
+     * @return mixed
      */
-    public function getOrderItemId()
+    public function getOrderItem()
     {
-        return $this->orderItemId;
+        return $this->orderItem;
     }
 
     /**
-     * @param int $orderItemId
+     * @param mixed $orderItem
      */
-    public function setOrderItemId($orderItemId)
+    public function setOrderItem($orderItem)
     {
-        $this->orderItemId = $orderItemId;
+        $this->orderItem = $orderItem;
     }
 
     /**

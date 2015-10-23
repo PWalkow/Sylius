@@ -8,6 +8,7 @@ use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Money\Currency;
 
 abstract class IntegrationTestCase extends WebTestCase
@@ -32,6 +33,9 @@ abstract class IntegrationTestCase extends WebTestCase
         $this->container = $this->client->getContainer();
         $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
         $this->eventDispatcher = $this->container->get('event_dispatcher');
+
+        $purger = new ORMPurger($this->entityManager);
+        $purger->purge();
 
         $this->entityManager->beginTransaction();
     }

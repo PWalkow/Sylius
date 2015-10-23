@@ -27,7 +27,7 @@ class AdjustmentSubscriberTest extends IntegrationTestCase
         $adjustmentDTO->setType(AdjustmentInterface::TAX_ADJUSTMENT);
         $adjustmentDTO->setAmount(123);
         $adjustmentDTO->setDescription('desc');
-        $adjustmentDTO->setOrderId($order->getId());
+        $adjustmentDTO->setOrder($order);
         $adjustmentDTO->setNeutral();
 
         $this->eventDispatcher->dispatch(
@@ -60,16 +60,16 @@ class AdjustmentSubscriberTest extends IntegrationTestCase
         $adjustmentDTO->setType(AdjustmentInterface::PROMOTION_ADJUSTMENT);
         $adjustmentDTO->setAmount(20000);
         $adjustmentDTO->setDescription('aaa');
-        $adjustmentDTO->setOrderId($order->getId());
-        $adjustmentDTO->setOrderItemId($orderItem->getId());
+        $adjustmentDTO->setOrder($order);
+        $adjustmentDTO->setOrderItem($orderItem);
         $adjustmentDTO->setInventoryUnit(1);
 
         $adjustmentDTO2 = new AdjustmentDTO();
         $adjustmentDTO2->setType(AdjustmentInterface::PROMOTION_ADJUSTMENT);
         $adjustmentDTO2->setAmount(40000);
         $adjustmentDTO2->setDescription('bbb');
-        $adjustmentDTO2->setOrderId($order->getId());
-        $adjustmentDTO2->setOrderItemId($orderItem->getId());
+        $adjustmentDTO2->setOrder($order);
+        $adjustmentDTO2->setOrderItem($orderItem);
         $adjustmentDTO2->setInventoryUnit(2);
 
         $this->eventDispatcher->dispatch(

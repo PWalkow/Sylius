@@ -11,14 +11,18 @@
 
 namespace Sylius\Bundle\CoreBundle\OrderProcessing;
 
+use Sylius\Bundle\OrderBundle\SyliusAdjustmentEvents;
 use Sylius\Bundle\SettingsBundle\Model\Settings;
 use Sylius\Component\Addressing\Matcher\ZoneMatcherInterface;
 use Sylius\Component\Core\Model\AdjustmentInterface;
 use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\Model\OrderItem;
 use Sylius\Component\Core\OrderProcessing\TaxationProcessorInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Sylius\Component\Order\DTO\AdjustmentDTO;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Taxation processor.
@@ -28,11 +32,11 @@ use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 class TaxationProcessor implements TaxationProcessorInterface
 {
     /**
-     * Adjustment repository.
+     * EventDispatcher.
      *
-     * @var RepositoryInterface
+     * @var EventDispatcherInterface
      */
-    protected $adjustmentRepository;
+    protected $eventDispatcher;
 
     /**
      * Tax calculator.
@@ -65,20 +69,20 @@ class TaxationProcessor implements TaxationProcessorInterface
     /**
      * Constructor.
      *
-     * @param RepositoryInterface      $adjustmentRepository
+     * @param EventDispatcherInterface $eventDispatcher
      * @param CalculatorInterface      $calculator
      * @param TaxRateResolverInterface $taxRateResolver
      * @param ZoneMatcherInterface     $zoneMatcher
      * @param Settings                 $taxationSettings
      */
     public function __construct(
-        RepositoryInterface $adjustmentRepository,
+        EventDispatcherInterface $eventDispatcher,
         CalculatorInterface $calculator,
         TaxRateResolverInterface $taxRateResolver,
         ZoneMatcherInterface $zoneMatcher,
         Settings $taxationSettings
     ) {
-        $this->adjustmentRepository = $adjustmentRepository;
+        $this->eventDispatcher = $eventDispatcher;
         $this->calculator = $calculator;
         $this->taxRateResolver = $taxRateResolver;
         $this->zoneMatcher = $zoneMatcher;
@@ -113,9 +117,8 @@ class TaxationProcessor implements TaxationProcessorInterface
             return;
         }
 
-        $taxes = $this->processTaxes($order, $zone);
-
-        $this->addAdjustments($taxes, $order);
+        $taxValues = $this->processTaxes($order, $zone);
+        $this->addAdjustments($taxValues, $order);
 
         $order->calculateTotal();
     }
@@ -123,39 +126,60 @@ class TaxationProcessor implements TaxationProcessorInterface
     protected function processTaxes(OrderInterface $order, $zone)
     {
         $taxes = array();
+
+        /** @var OrderItem $item */
         foreach ($order->getItems() as $item) {
-            $rate = $this->taxRateResolver->resolve($item->getProduct(), array('zone' => $zone));
+            $product = $item->getProduct();
+
+            $rate = $this->taxRateResolver->resolve($product, array('zone' => $zone));
 
             // Skip this item is there is not matching tax rate.
             if (null === $rate) {
                 continue;
             }
 
+            $inventoryPrice = $item->getUnitPrice();
             $item->calculateTotal();
-
-            $amount = $this->calculator->calculate($item->getTotal(), $rate);
+            $amount = $this->calculator->calculate($inventoryPrice, $rate);
             $taxAmount = $rate->getAmountAsPercentage();
             $description = sprintf('%s (%s%%)', $rate->getName(), (float) $taxAmount);
 
-            $taxes[$description] = array(
-                'amount'   => (isset($taxes[$description]['amount']) ? $taxes[$description]['amount'] : 0) + $amount,
-                'included' => $rate->isIncludedInPrice()
-            );
+            $quantity = $item->getQuantity();
+
+            for ($i = 1; $i <= $quantity; $i++) {
+                $taxes[] = array(
+                    'included' => $rate->isIncludedInPrice(),
+                    'amount'   => $amount,
+                    'inventoryUnit' => $i,
+                    'description' => $description,
+                    'originType' => get_class($rate),
+                    'orderItem' => $item,
+                );
+            }
         }
 
         return $taxes;
     }
 
-    protected function addAdjustments(array $taxes, OrderInterface $order)
+    protected function addAdjustments(array $taxes, $order)
     {
-        foreach ($taxes as $description => $tax) {
-            $adjustment = $this->adjustmentRepository->createNew();
-            $adjustment->setType(AdjustmentInterface::TAX_ADJUSTMENT);
-            $adjustment->setAmount($tax['amount']);
-            $adjustment->setDescription($description);
-            $adjustment->setNeutral($tax['included']);
+        foreach ($taxes as $tax) {
+            $adjustmentDto = new AdjustmentDTO();
+            $adjustmentDto->setType(AdjustmentInterface::TAX_ADJUSTMENT);
+            $adjustmentDto->setDescription($tax['description']);
+            $adjustmentDto->setNeutral($tax['included']);
+            $adjustmentDto->setAmount($tax['amount']);
+            $adjustmentDto->setOrder($order);
+            $adjustmentDto->setOrderItem($tax['orderItem']);
+            $adjustmentDto->setInventoryUnit($tax['inventoryUnit']);
+            $adjustmentDto->setOriginType($tax['originType']);
 
-            $order->addAdjustment($adjustment);
+            $event = new GenericEvent($adjustmentDto);
+
+            $this->eventDispatcher->dispatch(
+                SyliusAdjustmentEvents::INVENTORY_UNIT_LEVEL_ADJUSTMENT,
+                $event
+            );
         }
     }
 }

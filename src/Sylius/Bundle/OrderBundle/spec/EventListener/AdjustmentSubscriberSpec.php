@@ -59,10 +59,10 @@ class AdjustmentSubscriberSpec extends ObjectBehavior
         $dto->getOriginType()->willReturn('type of origin');
         $adjustment->setOriginType('type of origin')->shouldBeCalled();
 
-        $dto->getOrderId()->willReturn(17);
-        $orderRepository->findOneBy(['id' => 17])->shouldBeCalled()->willReturn($order);
+        $dto->getOrder()->willReturn($order);
         $adjustment->setOrder($order)->shouldBeCalled();
 
+        $adjustment->setOrderItem()->shouldNotBeCalled();
         $adjustment->setInventoryUnit()->shouldNotBeCalled();
 
         $entityManager->persist($adjustment)->shouldBeCalled();
@@ -73,8 +73,6 @@ class AdjustmentSubscriberSpec extends ObjectBehavior
 
     function it_add_adjustment_on_order_item_level(
         $adjustmentRepository,
-        $orderItemRepository,
-        $orderRepository,
         $entityManager,
         GenericEvent $event,
         AdjustmentDTO $dto,
@@ -86,8 +84,8 @@ class AdjustmentSubscriberSpec extends ObjectBehavior
 
         $adjustmentRepository->createNew()->shouldBeCalled()->willReturn($adjustment);
 
-        $dto->getType()->willReturn(AdjustmentInterface::PROMOTION_ADJUSTMENT);
-        $adjustment->setType(AdjustmentInterface::PROMOTION_ADJUSTMENT)->shouldBeCalled();
+        $dto->getType()->willReturn($type = AdjustmentInterface::PROMOTION_ADJUSTMENT);
+        $adjustment->setType($type)->shouldBeCalled();
 
         $dto->getAmount()->willReturn(123);
         $adjustment->setAmount(123)->shouldBeCalled();
@@ -104,16 +102,13 @@ class AdjustmentSubscriberSpec extends ObjectBehavior
         $dto->getOriginType()->willReturn('type of origin');
         $adjustment->setOriginType('type of origin')->shouldBeCalled();
 
-        $dto->getOrderItemId()->willReturn(37);
-        $orderItemRepository->findOneBy(['id' => 37])->shouldBeCalled()->willReturn($orderItem);
-
-        $dto->getOrderId()->willReturn(52);
-        $orderRepository->findOneBy(['id' => 52])->shouldBeCalled()->willReturn($order);
-
         $dto->getInventoryUnit()->willReturn(13);
-
         $adjustment->setInventoryUnit(13)->shouldBeCalled();
+
+        $dto->getOrder()->willReturn($order);
         $adjustment->setOrder($order)->shouldBeCalled();
+
+        $dto->getOrderItem()->willReturn($orderItem);
         $adjustment->setOrderItem($orderItem)->shouldBeCalled();
 
         $entityManager->persist($adjustment)->shouldBeCalled();
