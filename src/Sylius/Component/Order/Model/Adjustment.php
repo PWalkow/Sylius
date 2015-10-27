@@ -27,11 +27,6 @@ class Adjustment implements AdjustmentInterface
     protected $order;
 
     /**
-     * @var OrderItemInterface
-     */
-    protected $orderItem;
-
-    /**
      * @var int|null
      */
     protected $inventoryUnit;
@@ -106,10 +101,6 @@ class Adjustment implements AdjustmentInterface
             return $this->order;
         }
 
-        if (null !== $this->orderItem) {
-            return $this->orderItem;
-        }
-
         return null;
     }
 
@@ -118,14 +109,10 @@ class Adjustment implements AdjustmentInterface
      */
     public function setAdjustable(AdjustableInterface $adjustable = null)
     {
-        $this->order = $this->orderItem = null;
+        $this->order = null;
 
         if ($adjustable instanceof OrderInterface) {
             $this->order = $adjustable;
-        }
-
-        if ($adjustable instanceof OrderItemInterface) {
-            $this->orderItem = $adjustable;
         }
     }
 
@@ -143,22 +130,6 @@ class Adjustment implements AdjustmentInterface
     public function setOrder(OrderInterface $order)
     {
         $this->order = $order;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrderItem()
-    {
-        return $this->orderItem;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setOrderItem(OrderItemInterface $orderItem)
-    {
-        $this->orderItem = $orderItem;
     }
 
     /**

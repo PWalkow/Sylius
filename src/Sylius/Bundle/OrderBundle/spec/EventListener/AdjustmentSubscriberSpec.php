@@ -62,7 +62,6 @@ class AdjustmentSubscriberSpec extends ObjectBehavior
         $dto->getOrder()->willReturn($order);
         $adjustment->setOrder($order)->shouldBeCalled();
 
-        $adjustment->setOrderItem()->shouldNotBeCalled();
         $adjustment->setInventoryUnit()->shouldNotBeCalled();
 
         $entityManager->persist($adjustment)->shouldBeCalled();
@@ -77,7 +76,6 @@ class AdjustmentSubscriberSpec extends ObjectBehavior
         GenericEvent $event,
         AdjustmentDTO $dto,
         AdjustmentInterface $adjustment,
-        OrderItemInterface $orderItem,
         OrderInterface $order
     ) {
         $event->getSubject()->shouldBeCalled()->willReturn($dto);
@@ -107,9 +105,6 @@ class AdjustmentSubscriberSpec extends ObjectBehavior
 
         $dto->getOrder()->willReturn($order);
         $adjustment->setOrder($order)->shouldBeCalled();
-
-        $dto->getOrderItem()->willReturn($orderItem);
-        $adjustment->setOrderItem($orderItem)->shouldBeCalled();
 
         $entityManager->persist($adjustment)->shouldBeCalled();
         $entityManager->flush()->shouldNotBeCalled();

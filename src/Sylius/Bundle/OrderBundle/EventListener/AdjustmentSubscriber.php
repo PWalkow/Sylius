@@ -83,7 +83,6 @@ class AdjustmentSubscriber implements EventSubscriberInterface
         $adjustment = $this->createAdjustmentWithCommonValues($adjustmentDTO);
 
         $adjustment->setOrder($adjustmentDTO->getOrder());
-        $adjustment->setOrderItem($adjustmentDTO->getOrderItem());
         $adjustment->setInventoryUnit($adjustmentDTO->getInventoryUnit());
 
         $this->entityManager->persist($adjustment);

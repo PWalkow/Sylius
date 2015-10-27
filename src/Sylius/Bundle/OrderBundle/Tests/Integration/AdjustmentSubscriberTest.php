@@ -56,21 +56,21 @@ class AdjustmentSubscriberTest extends IntegrationTestCase
         $order = $this->createOrder();
         $orderItem = $this->createOrderItemThatBelongTo($order);
 
+        $inventoryUnit = $orderItem->getInventoryUnits()->first();
+
         $adjustmentDTO = new AdjustmentDTO();
         $adjustmentDTO->setType(AdjustmentInterface::PROMOTION_ADJUSTMENT);
         $adjustmentDTO->setAmount(20000);
         $adjustmentDTO->setDescription('aaa');
         $adjustmentDTO->setOrder($order);
-        $adjustmentDTO->setOrderItem($orderItem);
-        $adjustmentDTO->setInventoryUnit(1);
+        $adjustmentDTO->setInventoryUnit($inventoryUnit);
 
         $adjustmentDTO2 = new AdjustmentDTO();
-        $adjustmentDTO2->setType(AdjustmentInterface::PROMOTION_ADJUSTMENT);
+        $adjustmentDTO2->setType(AdjustmentInterface::TAX_ADJUSTMENT);
         $adjustmentDTO2->setAmount(40000);
         $adjustmentDTO2->setDescription('bbb');
         $adjustmentDTO2->setOrder($order);
-        $adjustmentDTO2->setOrderItem($orderItem);
-        $adjustmentDTO2->setInventoryUnit(2);
+        $adjustmentDTO2->setInventoryUnit($inventoryUnit);
 
         $this->eventDispatcher->dispatch(
             SyliusAdjustmentEvents::INVENTORY_UNIT_LEVEL_ADJUSTMENT,
@@ -92,19 +92,17 @@ class AdjustmentSubscriberTest extends IntegrationTestCase
         $adjustment = $adjustments[0];
 
         $this->assertEquals($order, $adjustment->getOrder());
-        $this->assertEquals($orderItem, $adjustment->getOrderItem());
         $this->assertSame(AdjustmentInterface::PROMOTION_ADJUSTMENT, $adjustment->getType());
         $this->assertSame(20000, $adjustment->getAmount());
         $this->assertSame('aaa', $adjustment->getDescription());
-        $this->assertSame(1, $adjustment->getInventoryUnit());
+        $this->assertSame($inventoryUnit, $adjustment->getInventoryUnit());
 
         $adjustment2 = $adjustments[1];
         $this->assertEquals($order, $adjustment2->getOrder());
-        $this->assertEquals($orderItem, $adjustment2->getOrderItem());
-        $this->assertSame(AdjustmentInterface::PROMOTION_ADJUSTMENT, $adjustment2->getType());
+        $this->assertSame(AdjustmentInterface::TAX_ADJUSTMENT, $adjustment2->getType());
         $this->assertSame(40000, $adjustment2->getAmount());
         $this->assertSame('bbb', $adjustment2->getDescription());
-        $this->assertSame(2, $adjustment2->getInventoryUnit());
+        $this->assertSame($inventoryUnit, $adjustment2->getInventoryUnit());
     }
 
 }

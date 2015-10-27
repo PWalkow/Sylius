@@ -41,25 +41,19 @@ class AdjustmentSpec extends ObjectBehavior
         $this->getAdjustable()->shouldReturn(null);
     }
 
-    function it_allows_assigning_itself_to_an_adjustable(OrderInterface $order, OrderItemInterface $orderItem)
-    {
+    function it_allows_assigning_itself_to_an_adjustable(
+        OrderInterface $order
+    ) {
         $this->setAdjustable($order);
         $this->getAdjustable()->shouldReturn($order);
-
-        $this->setAdjustable($orderItem);
-        $this->getAdjustable()->shouldReturn($orderItem);
     }
 
-    function it_allows_detaching_itself_from_an_adjustable(OrderInterface $order, OrderItemInterface $orderItem)
-    {
+    function it_allows_detaching_itself_from_an_adjustable(
+        OrderInterface $order,
+        OrderItemInterface $orderItem
+    ) {
         $this->setAdjustable($order);
         $this->getAdjustable()->shouldReturn($order);
-
-        $this->setAdjustable(null);
-        $this->getAdjustable()->shouldReturn(null);
-
-        $this->setAdjustable($orderItem);
-        $this->getAdjustable()->shouldReturn($orderItem);
 
         $this->setAdjustable(null);
         $this->getAdjustable()->shouldReturn(null);
@@ -170,17 +164,5 @@ class AdjustmentSpec extends ObjectBehavior
     ) {
         $this->setOrder($order);
         $this->getOrder()->shouldReturn($order);
-    }
-
-    function it_has_no_order_item_by_default()
-    {
-        $this->getOrderItem()->shouldReturn(null);
-    }
-
-    function its_order_item_is_mutable(
-        OrderItemInterface $orderItem
-    ) {
-        $this->setOrderItem($orderItem);
-        $this->getOrderItem()->shouldReturn($orderItem);
     }
 }

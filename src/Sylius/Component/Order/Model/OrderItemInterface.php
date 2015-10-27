@@ -16,7 +16,7 @@ namespace Sylius\Component\Order\Model;
  *
  * @author Paweł Jędrzejewski <pawel@sylius.org>
  */
-interface OrderItemInterface extends AdjustableInterface, OrderAwareInterface
+interface OrderItemInterface extends OrderAwareInterface
 {
     /**
      * @return int

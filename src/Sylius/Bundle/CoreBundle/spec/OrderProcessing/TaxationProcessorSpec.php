@@ -18,6 +18,7 @@ use Prophecy\Argument;
 use Sylius\Bundle\OrderBundle\SyliusAdjustmentEvents;
 use Sylius\Component\Core\Model\Order;
 use Sylius\Component\Core\Model\OrderItem;
+use Sylius\Component\Inventory\Model\InventoryUnitInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Sylius\Bundle\SettingsBundle\Model\Settings;
 use Sylius\Component\Addressing\Matcher\ZoneMatcherInterface;
@@ -89,6 +90,8 @@ class TaxationProcessorSpec extends ObjectBehavior
         ZoneInterface $zone,
         TaxableInterface $taxableProduct,
         TaxRateInterface $taxRate,
+        InventoryUnitInterface $inventoryUnit1,
+        InventoryUnitInterface $inventoryUnit2,
         $zoneMatcher,
         $taxationSettings,
         $taxRateResolver,
@@ -97,6 +100,16 @@ class TaxationProcessorSpec extends ObjectBehavior
         $orderItems = new ArrayCollection();
         $orderItems->add($firstOrderItem->getWrappedObject());
         $orderItems->add($secondOrderItem->getWrappedObject());
+
+        $inventoryUnits1 = new ArrayCollection();
+        $inventoryUnits1->add($inventoryUnit1->getWrappedObject());
+        $inventoryUnits1->add($inventoryUnit2->getWrappedObject());
+
+        $inventoryUnits2 = new ArrayCollection();
+        $inventoryUnits2->add($inventoryUnit2->getWrappedObject());
+
+        $firstOrderItem->getInventoryUnits()->willReturn($inventoryUnits1);
+        $secondOrderItem->getInventoryUnits()->willReturn($inventoryUnits2);
 
         $taxationSettings->has('default_tax_zone')->willReturn(true);
         $taxationSettings->get('default_tax_zone')->willReturn($zone);
@@ -115,12 +128,10 @@ class TaxationProcessorSpec extends ObjectBehavior
             array('zone' => $zone)
         )->shouldBeCalledTimes(2)->willReturn($taxRate);
 
-        $firstOrderItem->getQuantity()->willReturn(2);
         $firstOrderItem->getUnitPrice()->willReturn(123);
         $firstOrderItem->calculateTotal()->shouldBeCalled();
         $firstOrderItem->getId()->willReturn(234);
 
-        $secondOrderItem->getQuantity()->willReturn(1);
         $secondOrderItem->getUnitPrice()->willReturn(321);
         $secondOrderItem->calculateTotal()->shouldBeCalled();
         $secondOrderItem->getId()->willReturn(235);

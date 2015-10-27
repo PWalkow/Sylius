@@ -10,11 +10,8 @@
 
 namespace Sylius\Component\Order\DTO;
 
-
-
-
+use Sylius\Component\Inventory\Model\InventoryUnitInterface;
 use Sylius\Component\Order\Model\OrderInterface;
-use Sylius\Component\Order\Model\OrderItemInterface;
 
 class AdjustmentDTO
 {
@@ -22,11 +19,6 @@ class AdjustmentDTO
      * @var OrderInterface
      */
     private $order;
-
-    /**
-     * @var OrderItemInterface
-     */
-    private $orderItem;
 
     /** @var  int */
     private $inventoryUnit;
@@ -50,7 +42,7 @@ class AdjustmentDTO
     private $originType;
 
     /**
-     * @return mixed
+     * @return OrderInterface|null
      */
     public function getOrder()
     {
@@ -58,31 +50,15 @@ class AdjustmentDTO
     }
 
     /**
-     * @param mixed $order
+     * @param OrderInterface $order
      */
-    public function setOrder($order)
+    public function setOrder(OrderInterface $order)
     {
         $this->order = $order;
     }
 
     /**
-     * @return mixed
-     */
-    public function getOrderItem()
-    {
-        return $this->orderItem;
-    }
-
-    /**
-     * @param mixed $orderItem
-     */
-    public function setOrderItem($orderItem)
-    {
-        $this->orderItem = $orderItem;
-    }
-
-    /**
-     * @return int
+     * @return InventoryUnitInterface|null
      */
     public function getInventoryUnit()
     {
@@ -90,9 +66,9 @@ class AdjustmentDTO
     }
 
     /**
-     * @param int $inventoryUnit
+     * @param InventoryUnitInterface $inventoryUnit
      */
-    public function setInventoryUnit($inventoryUnit)
+    public function setInventoryUnit(InventoryUnitInterface $inventoryUnit)
     {
         $this->inventoryUnit = $inventoryUnit;
     }

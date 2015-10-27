@@ -144,16 +144,14 @@ class TaxationProcessor implements TaxationProcessorInterface
             $taxAmount = $rate->getAmountAsPercentage();
             $description = sprintf('%s (%s%%)', $rate->getName(), (float) $taxAmount);
 
-            $quantity = $item->getQuantity();
-
-            for ($i = 1; $i <= $quantity; $i++) {
+            foreach ($item->getInventoryUnits() as $inventoryUnit) {
                 $taxes[] = array(
                     'included' => $rate->isIncludedInPrice(),
                     'amount'   => $amount,
-                    'inventoryUnit' => $i,
+                    'inventoryUnit' => $inventoryUnit,
                     'description' => $description,
                     'originType' => get_class($rate),
-                    'orderItem' => $item,
+                    'originId' => 'what to put here in case of tax?',
                 );
             }
         }
@@ -170,9 +168,9 @@ class TaxationProcessor implements TaxationProcessorInterface
             $adjustmentDto->setNeutral($tax['included']);
             $adjustmentDto->setAmount($tax['amount']);
             $adjustmentDto->setOrder($order);
-            $adjustmentDto->setOrderItem($tax['orderItem']);
             $adjustmentDto->setInventoryUnit($tax['inventoryUnit']);
             $adjustmentDto->setOriginType($tax['originType']);
+            $adjustmentDto->setOriginId($tax['originId']);
 
             $event = new GenericEvent($adjustmentDto);
 
